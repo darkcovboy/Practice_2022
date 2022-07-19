@@ -1,22 +1,18 @@
-# This is a basic workflow to help you get started with Actions
 
-name: CI
+name: upload
 
-# Controls when the workflow will run
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: [ master ]
   pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  upload:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -24,13 +20,19 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Upload datasets
+        uses: jaimevalero/push-kaggle-dataset@v3 # This is the action
+        env:
+          # Do not leak your credentials.
+          KAGGLE_USERNAME: dillonspaulding
+          KAGGLE_KEY: 413d736c9bb0f49107cbf0a70b8ff59e
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+        with:
+          id:  "dillonspaulding/Practice2022"
+          title: "Testing github actions for upload datasets"
+          subtitle: "Titanic data2"
+          description: "## Example of dataset syncronized by github actions <br/>Source https://github.com/jaimevalero/test-actions and https://github.com/jaimevalero/push-kaggle-dataset <br/> "
+          files:  submission.csv
+          is_public: true
+
